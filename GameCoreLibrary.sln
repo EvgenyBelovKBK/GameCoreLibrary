@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33712.159
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameCoreLibrary", "GameCoreLibrary\GameCoreLibrary.csproj", "{7D2A323C-5EE8-483C-8645-7A10B02B05DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D2A323C-5EE8-483C-8645-7A10B02B05DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D2A323C-5EE8-483C-8645-7A10B02B05DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D2A323C-5EE8-483C-8645-7A10B02B05DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D2A323C-5EE8-483C-8645-7A10B02B05DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {84AA2E15-35CF-44B3-8602-4B19EB66F43C}
+	EndGlobalSection
+EndGlobal
