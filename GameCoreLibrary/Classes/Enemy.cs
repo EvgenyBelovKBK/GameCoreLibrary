@@ -8,9 +8,9 @@ namespace GameCoreLibrary.Classes
         public Tiers Tier { get; set; }
         public string AsciiArt { get; set; }
 
-        public Enemy(Tiers tier, Race race, List<Ability> abilities, Inventory inventory, int gold, string name,
+        public Enemy(Tiers tier, Race race,  Inventory inventory, int gold, string name,
             int maxHp, int damage, int armor, int lifestealPercent, int criticalStrikeChance, int blockChance = 0,
-            int evadeChance = 0, string asciiArt = "") : base(race, abilities, inventory, gold, name, maxHp, damage,
+            int evadeChance = 0, string asciiArt = "") : base(race, inventory, gold, name, maxHp, damage,
             armor, lifestealPercent, criticalStrikeChance, blockChance, evadeChance)
         {
             Inventory = inventory;

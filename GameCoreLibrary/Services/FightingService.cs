@@ -9,8 +9,6 @@ namespace GameCoreLibrary.Services
     {
         private readonly NumbersRandomGenerator _randomGenerator;
 
-        private const double CRIT_MULTIPLIER = 1.65;
-        private const double DAMAGE_AFTER_BLOCK_MULTIPLIER = 0.35;
         public FightingService(NumbersRandomGenerator randomGenerator)
         {
             _randomGenerator = randomGenerator;
@@ -27,13 +25,13 @@ namespace GameCoreLibrary.Services
                 return 0;
             }
             fightResult = new FightResultBuilder().SetDamage(isCrit);
-            var damageAfterCritRoll = isCrit ? damage * CRIT_MULTIPLIER : damage;
+            var damageAfterCritRoll = isCrit ? damage * BalanceConstants.CritMultiplier : damage;
             var finalDamage = damageAfterCritRoll - targetArmor;
             //Блокирование удара нивелирует 65% урона
             if (isBlock)
             {
                 fightResult = new FightResultBuilder().SetBlock();
-                finalDamage *= DAMAGE_AFTER_BLOCK_MULTIPLIER;
+                finalDamage *= BalanceConstants.DamageAfterBlockMultiplier;
             }
             finalDamage = finalDamage < 0 ? 0 : finalDamage;
             return (int)finalDamage;
@@ -63,17 +61,18 @@ namespace GameCoreLibrary.Services
                 enemy.Stats[StatsConstants.CritChanceStat], player.Stats[StatsConstants.ArmorStat],
                 player.Stats[StatsConstants.BlockChanceStat], player.Stats[StatsConstants.EvadeChanceStat], out var enemyFightResult);
 
+            //TODO
             if (isPlayerTurn)
             {
                 PlayerAction(player, enemy, playerDamageToEnemy, playerFightResult);
-                if (CheckForDeath(enemy.Stats[StatsConstants.HpStat]))
+                if (enemy.IsDead())
                 {
                     isEnemyDied = true;
                     return;
                 }
 
                 EnemyAction(enemy,player, enemyDamageToPlayer,enemyFightResult);
-                if (CheckForDeath(player.Stats[StatsConstants.HpStat]))
+                if (player.IsDead())
                 {
                     isPlayerDied = true;
                 }
@@ -81,14 +80,14 @@ namespace GameCoreLibrary.Services
             else
             {
                 EnemyAction(enemy, player, enemyDamageToPlayer, enemyFightResult);
-                if (CheckForDeath(player.Stats[StatsConstants.HpStat]))
+                if (player.IsDead())
                 {
                     isPlayerDied = true;
                     return;
                 }
 
                 PlayerAction(player, enemy, playerDamageToEnemy,playerFightResult );
-                if (CheckForDeath(enemy.Stats[StatsConstants.HpStat]))
+                if (enemy.IsDead())
                 {
                     isEnemyDied = true;
                 }
@@ -101,7 +100,7 @@ namespace GameCoreLibrary.Services
             enemy.Stats[StatsConstants.HpStat] -= playerDamageToEnemy;
             if (playerFightResult.AttackOutcome == FightAction.CriticalStrike)
             {
-                player.ActivateAbilities(ActiveAbilityType.PlayerCrit);
+                //TODO
             }
             var playerLifesteal = CalculateLifesteal(playerDamageToEnemy,
                 player.Stats[StatsConstants.LifestealStat],
@@ -110,7 +109,7 @@ namespace GameCoreLibrary.Services
             player.Stats[StatsConstants.HpStat] += playerLifesteal;
             if (playerLifesteal > 0)
             {
-                player.ActivateAbilities(ActiveAbilityType.PlayerLifesteal);
+                //TODO
             }
 
         }
@@ -120,7 +119,7 @@ namespace GameCoreLibrary.Services
             player.Stats[StatsConstants.HpStat] -= enemyDamageToPlayer;
             if (enemyFightResult.AttackOutcome == FightAction.CriticalStrike)
             {
-                player.ActivateAbilities(ActiveAbilityType.EnemyCrit);
+                //TODO
             }
             var enemyLifesteal = CalculateLifesteal(enemyDamageToPlayer,
                 enemy.Stats[StatsConstants.LifestealStat],
@@ -128,11 +127,5 @@ namespace GameCoreLibrary.Services
                 enemy.Stats[StatsConstants.MaxHpStat]);
             enemy.Stats[StatsConstants.HpStat] += enemyLifesteal;
         }
-
-        public bool CheckForDeath(int hp)
-        {
-            return hp <= 0;
-        }
-
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace GameCoreLibrary.Classes
+﻿using GameCoreLibrary.Enums;
+
+namespace GameCoreLibrary.Classes
 {
     public class Player : Character
     {
@@ -17,9 +19,9 @@
             }
         }
 
-        public Player(Race race, List<Ability> abilities, Inventory inventory, int gold, string name, int maxHp,
+        public Player(Race race, Inventory inventory, int gold, string name, int maxHp,
             int damage, int armor, int lifestealPercent, int criticalStrikeChance, int blockChance, int evadeChance) :
-            base(race, abilities, inventory, gold, name, maxHp, damage, armor, lifestealPercent, criticalStrikeChance,
+            base(race, inventory, gold, name, maxHp, damage, armor, lifestealPercent, criticalStrikeChance,
                 blockChance, evadeChance)
         {
             Points = 0;

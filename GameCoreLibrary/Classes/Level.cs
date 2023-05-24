@@ -17,7 +17,6 @@ namespace GameCoreLibrary.Classes
             {
                 Enemies.Add(new Enemy(enemy.Tier,
                     enemy.Race,
-                    enemy.Abilities,
                     enemy.Inventory,
                     enemy.Gold,
                     enemy.Name,
