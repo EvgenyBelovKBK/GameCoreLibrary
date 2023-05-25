@@ -6,7 +6,7 @@ namespace GameCoreLibrary.Classes
     {
         public WeaponType WeaponType { get; set; }
 
-        public Weapon(Dictionary<string, int> stats, ItemType type,WeaponType weaponType, int cost, Tiers rarity, string name) : base(stats, type, cost, rarity, name)
+        public Weapon(Dictionary<string, int> stats, ItemType type,WeaponType weaponType, int cost, Tier rarity, string name) : base(stats, type, cost, rarity, name)
         {
             WeaponType = weaponType;
         }

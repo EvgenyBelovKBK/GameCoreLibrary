@@ -1,6 +1,6 @@
 ﻿namespace GameCoreLibrary.Enums
 {
-    public enum Tiers
+    public enum Tier
     {
         Tier1,
         Tier2,

@@ -12,7 +12,6 @@
         Amulet,
         Ring,
         Potion,
-        Food,
         Rune
     }
 }

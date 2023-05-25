@@ -4,6 +4,6 @@ namespace GameCoreLibrary.Interfaces
 {
     public interface ITierable
     {
-        Tiers Tier { get; set; }
+        Tier Tier { get; set; }
     }
 }

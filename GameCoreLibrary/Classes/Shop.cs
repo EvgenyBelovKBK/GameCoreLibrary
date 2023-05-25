@@ -2,13 +2,14 @@
 
 namespace GameCoreLibrary.Classes
 {
+    //TODO
     public class Shop
     {
         public string Name { get; set; }
         public List<Item> Stock { get; set; }
-        public Tiers Tier { get; set; }
+        public Tier Tier { get; set; }
 
-        public Shop(Tiers tier, string name, List<Item> stock)
+        public Shop(Tier tier, string name, List<Item> stock)
         {
             Tier = tier;
             Name = name;

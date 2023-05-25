@@ -15,7 +15,6 @@ namespace GameCoreLibrary.Constants
             {ItemType.Belt,1},
             {ItemType.Ring,2},
             {ItemType.Amulet,1},
-            {ItemType.Food,2},
             {ItemType.Rune,2},
             {ItemType.Potion,2},
         };

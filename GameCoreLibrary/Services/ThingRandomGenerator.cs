@@ -17,9 +17,9 @@ namespace GameCoreLibrary.Services
         /// <param name="totalAmount">кол-во штук</param>
         /// <param name="chancesDictionary">тир = шанс</param>
         /// <returns></returns>
-        public Dictionary<Tiers, int> GetThingsCountInTiers(int totalAmount, Dictionary<Tiers, int> chancesDictionary)
+        public Dictionary<Tier, int> GetThingsCountInTiers(int totalAmount, Dictionary<Tier, int> chancesDictionary)
         {
-            var result = new Dictionary<Tiers, int>(){{Tiers.Tier1,0}, { Tiers.Tier2, 0 }, { Tiers.Tier3, 0 }, { Tiers.Tier4, 0 }, { Tiers.Tier5, 0 }};
+            var result = new Dictionary<Tier, int>(){{Tier.Tier1,0}, { Tier.Tier2, 0 }, { Tier.Tier3, 0 }, { Tier.Tier4, 0 }, { Tier.Tier5, 0 }};
 
             var currentAmount = 0;
             while (currentAmount < totalAmount)
@@ -38,7 +38,7 @@ namespace GameCoreLibrary.Services
             return result;
         }
 
-        public List<T> GenerateRandomThings(T[] thingsEnumerable,Tiers tier, int itemsCount, Dictionary<Tiers, int> chancesDictionary)
+        public List<T> GenerateRandomThings(T[] thingsEnumerable,Tier tier, int itemsCount, Dictionary<Tier, int> chancesDictionary)
         {
             var items = new List<T>();
             var itemsTiersCount = GetThingsCountInTiers(itemsCount, chancesDictionary);

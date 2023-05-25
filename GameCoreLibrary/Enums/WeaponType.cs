@@ -8,6 +8,8 @@
         TwoHandedSword,
         TwoHandedAxe,
         Bow,
+        Wand,
+        Staff,
         Scythe,
         Mace,
         Shield
