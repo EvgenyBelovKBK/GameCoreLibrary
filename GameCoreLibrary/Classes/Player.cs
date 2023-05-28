@@ -1,15 +1,33 @@
-﻿using GameCoreLibrary.Enums;
+﻿using GameCoreLibrary.Constants;
+using GameCoreLibrary.Enums;
 
 namespace GameCoreLibrary.Classes
 {
     public class Player : Character
     {
-        public Player(Race race, Class _class, Inventory inventory, int level, int gold, string name, int maxHp,
-            int damage, int armor, int lifestealPercent, int criticalStrikeChance, int blockChance, int evadeChance) :
-            base(race, _class, inventory, level, gold, name, maxHp, damage, armor, lifestealPercent, criticalStrikeChance,
-                blockChance, evadeChance)
+        public int Xp { get; set; } = 0;
+        public int NextLevelXp { get; set; } = 100;
+
+        public Player(string name, int level, Class _class, Inventory inventory, Dictionary<string, double> stats, int gold = 0) :
+            base(name, level, _class, inventory, stats, gold)
         {
 
         }
+
+        /// <returns>True if new level</returns>
+        public bool AddXp(int xpAmount)
+        {
+            Xp += xpAmount;
+            if (Xp >= NextLevelXp)
+            {
+                NextLevelXp = (int)(NextLevelXp + ((BalanceConstants.BaseNextLevelXpAmount + Level) *
+                                                   Math.Pow(Level, BalanceConstants.NextLevelXpMultiplier)));
+                LvlUp();
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }

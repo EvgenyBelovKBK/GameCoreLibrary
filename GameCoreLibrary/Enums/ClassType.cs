@@ -2,6 +2,11 @@
 {
     public enum ClassType
     {
-        //TODO
+        Warrior,  
+        Mage,     
+        Archer,   
+        Swordsman,
+        Shaman, 
+        Shadow    
     }
 }

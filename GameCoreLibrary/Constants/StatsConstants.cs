@@ -2,20 +2,24 @@
 {
     public static class StatName
     {
-        public const string TotalHp = "MaxHP";
-        public const string Hp = "HP";
-        public const string Damage = "Damage";
-        public const string Armor = "Armor";
-        public const string LifestealPercent = "LifestealPercent";
-        public const string CritChance = "CritChance";
+        public static readonly string TotalHp = "TotalHP";
+        public static readonly string Hp = "HP";
+        public static readonly string TotalMana = "TotalMana";
+        public static readonly string Mana = "Mana";
+        public static readonly string PhysDamage = "Damage";
+        public static readonly string SpellDamage = "SpellDamage";
+        public static readonly string Armor = "Armor";
+        public static readonly string MagicResistance = "MagicResistance";
+        public static readonly string LifestealPercent = "LifestealPercent";
+        public static readonly string CritChance = "CritChance";
         /// <summary>
-        /// Base damage Percent
+        /// Base damage percent multiplier
         /// </summary>
-        public const string CritDamageMultiplier = "CritDamageMultiplier";
-        public const string BlockChance = "BlockChance";
-        public const string EvadeChance = "EvadeChance";
-        public const string Agility = "Agility";
-        public const string Strength = "Strength";
-        public const string Intelligence = "Intelligence";
+        public static readonly string CritDamageMultiplier = "CritDamageMultiplier";
+        public static readonly string BlockChance = "BlockChance";
+        public static readonly string EvadeChance = "EvadeChance";
+        public static readonly string Agility = "Agility";
+        public static readonly string Strength = "Strength";
+        public static readonly string Intelligence = "Intelligence";
     }
 }

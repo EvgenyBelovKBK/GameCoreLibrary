@@ -8,27 +8,39 @@ namespace GameCoreLibrary.Constants
 {
     public static class BalanceConstants
     {
-        public const double DamageAfterBlockMultiplier = 0.35;
+        #region Combat
 
-        public const double CritMultiplier = 1.65;
+        public static readonly double DamageAfterBlockMultiplier = 0.40;
 
-        public const double NextLevelXpMultiplier = 2;
-        public const double BaseNextLevelXpAmount = 20;
-
-        public static readonly Dictionary<string, int> BaseCharacterStats = new()
+        public static readonly Func<double, double, double> ArmorDamageMitigation = (damage, armor) =>
         {
-            { StatName.TotalHp, 100 },
-            { StatName.Hp, 100 },
-            { StatName.Intelligence, 5 },
-            { StatName.Agility, 5 },
-            { StatName.Strength, 5 },
-            { StatName.Armor, 10 },
-            { StatName.BlockChance, 0 },
-            { StatName.CritChance, 5 },
-            { StatName.Damage, 25 },
-            { StatName.EvadeChance, 0 },
-            { StatName.LifestealPercent, 0 },
-            { StatName.CritDamageMultiplier, 150 },
+            if (damage <= armor)
+                return damage / (armor / damage);
+            else
+                return 1;            
         };
+
+        #endregion
+
+        #region Level
+
+        public static readonly double NextLevelXpMultiplier = 2;
+        public static readonly double BaseNextLevelXpAmount = 20;
+
+        #endregion
+
+        #region Other
+
+        public static readonly Dictionary<string, double> StatsCaps = new()
+        {
+            { StatName.EvadeChance, 85 },
+            { StatName.MagicResistance, 75 },
+            { StatName.BlockChance, 90 },
+            { StatName.LifestealPercent, 50 }
+        };
+
+        #endregion
+
+        
     }
 }

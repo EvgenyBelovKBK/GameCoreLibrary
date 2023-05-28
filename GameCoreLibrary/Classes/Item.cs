@@ -9,7 +9,7 @@ namespace GameCoreLibrary.Classes
         public string Name {get; set; }
         public Tier Tier { get; set; }
         public ItemType Type { get; }
-        public Item(Dictionary<string, int> stats, ItemType type, int cost, Tier rarity, string name) :base(stats)
+        public Item(Dictionary<string, double> stats, ItemType type, int cost, Tier rarity, string name) :base(stats)
         {
             Type = type;
             Stats = stats;

@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GameCoreLibrary.Constants;
 using GameCoreLibrary.Enums;
 
 namespace GameCoreLibrary.Classes
 {
     public class Class
     {
-        public string Description { get; set; }
-        public ClassType ClassType { get; set; }
-        public Dictionary<string, int> BaseStats { get; }
+        public string Description { get; }
+        public ClassType ClassType { get; }
+        public Dictionary<string, double> LvlUpStatsIncrease { get; }
 
-        public Class(string description, ClassType classType, Dictionary<string, int> baseStats)
+        public Class(string description, ClassType classType)
         {
             Description = description;
             ClassType = classType;
-            BaseStats = baseStats;
+            LvlUpStatsIncrease = CharConstants.ClassLvlUpStatsIncrease[classType];
         }
     }
 }

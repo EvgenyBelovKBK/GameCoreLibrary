@@ -42,11 +42,11 @@ namespace GameCoreLibrary.Services
             isEnemyDied = false;
             isPlayerDied = false;
 
-            var playerDamageToEnemy = CalculateFinalDamage(player.Stats[StatName.Damage],
+            var playerDamageToEnemy = CalculateFinalDamage(player.Stats[StatName.PhysDamage],
                 player.Stats[StatName.CritChance], enemy.Stats[StatName.Armor],
                 enemy.Stats[StatName.BlockChance], enemy.Stats[StatName.EvadeChance],
                 out var playerFightResult);
-            var enemyDamageToPlayer = CalculateFinalDamage(enemy.Stats[StatName.Damage],
+            var enemyDamageToPlayer = CalculateFinalDamage(enemy.Stats[StatName.PhysDamage],
                 enemy.Stats[StatName.CritChance], player.Stats[StatName.Armor],
                 player.Stats[StatName.BlockChance], player.Stats[StatName.EvadeChance],
                 out var enemyFightResult);

@@ -8,23 +8,26 @@ namespace GameCoreLibrary.Classes
     {
         public int Gold { get; set; }
         public int Level { get; set; }
-        public int Xp { get; set; } = 0;
-        public int NextLevelXp { get; set; } = 100;
         public string Name { get; set; }
         public Inventory Inventory { get; set; }
-        public Dictionary<string, int> BaseStats { get; }
-        public Class Class { get; set; }
+        public Class Class { get; }
 
-        protected Character(string name, int level, Class _class, Inventory inventory, Dictionary<string, int> stats, int gold = 0) : base(stats)
+        //TODO Move to README
+        // Some Stats increase(ex. lvlup, subclass selection) should be forever baked into character, 
+        // so when something happens in-game(inventory change, base stat modifiers etc) and Stats need recalculating,
+        // BaseStats will have these baked values saved and Stats recalculation will happen on top of BaseStats
+        private Dictionary<string, double> BaseStats { get; }
+        private Dictionary<string, double> BaseLvlUpStatsIncrease { get; } = CharConstants.BaseLvlUpStatsIncrease;
+
+        protected Character(string name, int level, Class _class, Inventory inventory, Dictionary<string, double> stats,
+            int gold = 0) : base(stats)
         {
             Gold = gold;
             Name = name;
             Class = _class;
             Level = level;
             Inventory = inventory;
-            BaseStats = new Dictionary<string, int>(Stats);
-            this.AddStats(Class.BaseStats, true);
-            this.AddStats(BalanceConstants.BaseCharacterStats, true);
+            BaseStats = new Dictionary<string, double>(Stats);
 
             Inventory.Items.CollectionChanged += (sender, args) =>
             {
@@ -43,89 +46,91 @@ namespace GameCoreLibrary.Classes
                 {
                     Inventory.ItemRestrictions = new Dictionary<ItemType, int>(ItemConstants.DefaultItemRestrictions);
                 }
+
                 this.ReCalculateStats(Inventory.Items);
             };
         }
 
-        
 
-        
-    }
-
-    public static class CharacterExtensions
-    {
-        public static bool IsDead(this Character character)
+        protected void LvlUp(int lvlAmount = 1)
         {
-            return character.Stats[StatName.Hp] <= 0;
+            Level += lvlAmount;
+            AddStats(BaseLvlUpStatsIncrease, true);
+            AddStats(
+                lvlAmount == 1
+                    ? Class.LvlUpStatsIncrease
+                    : Class.LvlUpStatsIncrease.ToDictionary(k => k.Key, v => v.Value * lvlAmount), true);
+            //TODO
         }
 
-        /// <returns>Is lifesteal > 0 applied</returns>
-        public static bool ApplyLifesteal(this Character character, int damageDealt)
+        public bool IsDead()
+        {
+            return Stats[StatName.Hp] <= 0;
+        }
+
+        /// <returns>True if lifesteal > 0 applied</returns>
+        public bool ApplyLifesteal(int damageDealt)
         {
             //Reverse lifesteal is OFF
-            if (character.Stats[StatName.LifestealPercent] <= 0)
+            if (Stats[StatName.LifestealPercent] <= 0)
                 return false;
             var onePercentOfDamage = (double)damageDealt / 100;
-            var lifesteal = onePercentOfDamage * character.Stats[StatName.LifestealPercent];
-            var hp = character.Stats[StatName.Hp];
-            var maxHp = character.Stats[StatName.TotalHp];
+            var lifesteal = onePercentOfDamage * Stats[StatName.LifestealPercent];
+            var hp = Stats[StatName.Hp];
+            var maxHp = Stats[StatName.TotalHp];
 
             if (hp + lifesteal > maxHp)
                 lifesteal = maxHp - hp;
 
-            character.Stats[StatName.Hp] += (int)lifesteal; 
+            Stats[StatName.Hp] += (int)lifesteal;
             return true;
         }
 
-        public static void AddStats(this Character character, Dictionary<string, int> statsToAdd,bool withBase = false)
+        public void AddStats(Dictionary<string, double> statsToAdd, bool withBase = false)
         {
+            AddStatsFromAttributes(statsToAdd);
             foreach (var stat in statsToAdd)
             {
-                character.Stats[stat.Key] += stat.Value;
+                Stats[stat.Key] += stat.Value;
+                if (Stats[stat.Key] > BalanceConstants.StatsCaps[stat.Key])
+                    Stats[stat.Key] = BalanceConstants.StatsCaps[stat.Key];
                 if (withBase)
-                    character.BaseStats[stat.Key] += stat.Value;
+                    BaseStats[stat.Key] += stat.Value;
             }
         }
 
-        public static void ReCalculateStats(this Character character, IEnumerable<Item>? items = null)
+        //Stats from attributes are NOT baked into character, they are always calculated
+        private void AddStatsFromAttributes(Dictionary<string, double> stats)
         {
-            var currentHp = character.Stats[StatName.Hp];
-            character.Stats = new Dictionary<string, int>(character.BaseStats)
+            var filteredStats = stats.Where(x => CharConstants.AttrStatsIncrease.ContainsKey(x.Key))
+                                                        .ToDictionary(k => k.Key, v => v.Value));
+            foreach (var attributeStat in filteredStats)
+            {
+                var attributeStatIncrease = CharConstants.AttrStatsIncrease[attributeStat.Key];
+                foreach (var statIncrease in attributeStatIncrease)
+                {
+                    Stats[statIncrease.Key] += statIncrease.Value * attributeStat.Value;
+                }
+            }
+        }
+
+        public void ReCalculateStats(IEnumerable<Item> items)
+        {
+            var currentHp = Stats[StatName.Hp];
+            Stats = new Dictionary<string, double>(BaseStats)
             {
                 [StatName.Hp] = currentHp
             };
 
-            if (items != null)
+            AddStatsFromAttributes(Stats);
+
+            foreach (var item in items)
             {
-                foreach (var item in items)
-                {
-                    character.AddStats(item.Stats);
-                }
+                AddStats(item.Stats);
             }
 
-            if (character.Stats[StatName.Hp] > character.Stats[StatName.TotalHp])
-                character.Stats[StatName.Hp] = character.Stats[StatName.TotalHp];
-        }
-
-        /// <returns>Is new level</returns>
-        public static bool AddXp(this Character character, int xpAmount)
-        {
-            character.Xp += xpAmount;
-            if (character.Xp >= character.NextLevelXp)
-            {
-                character.LvlUp();
-                return true;
-            }
-
-            return false;
-        }
-
-        private static void LvlUp(this Character character)
-        {
-            character.NextLevelXp = (int)(character.NextLevelXp +
-                                          ((BalanceConstants.BaseNextLevelXpAmount + character.Level) *
-                                           Math.Pow(character.Level, BalanceConstants.NextLevelXpMultiplier)));
-            //TODO
+            if (Stats[StatName.Hp] > Stats[StatName.TotalHp])
+                Stats[StatName.Hp] = Stats[StatName.TotalHp];
         }
     }
 }
