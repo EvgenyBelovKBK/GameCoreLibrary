@@ -10,15 +10,11 @@ namespace GameCoreLibrary.Constants
     {
         #region Combat
 
-        public static readonly double DamageAfterBlockMultiplier = 0.40;
+        public static readonly double DamageAfterBlockMultiplier = 0.60;
 
-        public static readonly Func<double, double, double> ArmorDamageMitigation = (damage, armor) =>
-        {
-            if (damage <= armor)
-                return damage / (armor / damage);
-            else
-                return 1;            
-        };
+        //mult * (damage * damage) / armor + mult * damage
+        //Less value - less damage taken, more value - more damage taken through armor
+        public static readonly double RawDamageToArmorMult = 3;
 
         #endregion
 

@@ -14,42 +14,39 @@ namespace GameCoreLibrary.Services
             _randomGenerator = randomGenerator;
         }
 
-        private int CalculateFinalDamage(int damage, int criticalStrikeChance, int targetArmor,int targetBlockChance,int targetEvadeChance,out FightResult fightResult)
+        private int CalculateFinalDamage(Character attacker, Character defender, out FightResult fightResult)
         {
-            var isCrit = _randomGenerator.IsRolled(criticalStrikeChance);
-            var isEvade = _randomGenerator.IsRolled(targetEvadeChance);
-            var isBlock = _randomGenerator.IsRolled(targetBlockChance);
+            var isCrit = _randomGenerator.IsRolled(attacker.Stats[StatName.CritChance]);
+            var isEvade = _randomGenerator.IsRolled(defender.Stats[StatName.EvadeChance]);
+            var isBlock = _randomGenerator.IsRolled(defender.Stats[StatName.BlockChance]);
             if (isEvade)
             {
                 fightResult = new FightResultBuilder().SetEvasion();
                 return 0;
             }
             fightResult = new FightResultBuilder().SetDamage(isCrit);
-            var damageAfterCritRoll = isCrit ? damage * BalanceConstants.CritMultiplier : damage;
-            var finalDamage = damageAfterCritRoll - targetArmor;
-
+            var damageAfterCritRoll = isCrit ? attacker.Stats[StatName.PhysDamage] * attacker.Stats[StatName.CritDamageMultiplier] :
+                                               attacker.Stats[StatName.PhysDamage];
             if (isBlock)
             {
                 fightResult = new FightResultBuilder().SetBlock();
-                finalDamage *= BalanceConstants.DamageAfterBlockMultiplier;
+                damageAfterCritRoll *= BalanceConstants.DamageAfterBlockMultiplier;
             }
+
+            var finalDamage = CalulatePhysDamageAfterArmor(damageAfterCritRoll, defender.Stats[StatName.Armor]);
+
             finalDamage = finalDamage < 0 ? 0 : finalDamage;
             return (int)finalDamage;
         }
 
+        //TODO
         public void CalculateFight(Player player, Enemy enemy, out bool isEnemyDied, out bool isPlayerDied)
         {
             isEnemyDied = false;
             isPlayerDied = false;
 
-            var playerDamageToEnemy = CalculateFinalDamage(player.Stats[StatName.PhysDamage],
-                player.Stats[StatName.CritChance], enemy.Stats[StatName.Armor],
-                enemy.Stats[StatName.BlockChance], enemy.Stats[StatName.EvadeChance],
-                out var playerFightResult);
-            var enemyDamageToPlayer = CalculateFinalDamage(enemy.Stats[StatName.PhysDamage],
-                enemy.Stats[StatName.CritChance], player.Stats[StatName.Armor],
-                player.Stats[StatName.BlockChance], player.Stats[StatName.EvadeChance],
-                out var enemyFightResult);
+            var playerDamageToEnemy = CalculateFinalDamage(player, enemy, out var playerFightResult);
+            var enemyDamageToPlayer = CalculateFinalDamage(enemy, player, out var enemyFightResult);
 
             //TODO
             if (true)
@@ -94,6 +91,12 @@ namespace GameCoreLibrary.Services
             }
 
             enemy.ApplyLifesteal(enemyDamageToPlayer);
+        }
+
+        //mult * (damage * damage) / armor + mult * damage
+        private double CalulatePhysDamageAfterArmor(double damage, double armor)
+        {
+            return BalanceConstants.RawDamageToArmorMult * (damage * damage) / armor + (BalanceConstants.RawDamageToArmorMult * damage);
         }
     }
 }

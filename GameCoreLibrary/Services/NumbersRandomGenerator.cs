@@ -8,7 +8,7 @@
             return Random.Next(minValue, maxValue + 1);
         }
 
-        public bool IsRolled(int chance)
+        public bool IsRolled(double chance)
         {
             return chance != 0 && GetRandomNumber() <= chance;
         }

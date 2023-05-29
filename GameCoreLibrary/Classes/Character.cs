@@ -12,10 +12,9 @@ namespace GameCoreLibrary.Classes
         public Inventory Inventory { get; set; }
         public Class Class { get; }
 
-        //TODO Move to README
         // Some Stats increase(ex. lvlup, subclass selection) should be forever baked into character, 
         // so when something happens in-game(inventory change, base stat modifiers etc) and Stats need recalculating,
-        // BaseStats will have these baked values saved and Stats recalculation will happen on top of BaseStats
+        // BaseStats will have these baked values saved and recalculation will happen on top of BaseStats
         private Dictionary<string, double> BaseStats { get; }
         private Dictionary<string, double> BaseLvlUpStatsIncrease { get; } = CharConstants.BaseLvlUpStatsIncrease;
 
