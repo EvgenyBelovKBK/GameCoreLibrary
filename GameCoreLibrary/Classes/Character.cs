@@ -7,26 +7,20 @@ namespace GameCoreLibrary.Classes
     public abstract class Character : ObjectStats
     {
         public int Gold { get; set; }
-        public int Level { get; set; }
         public string Name { get; set; }
         public Inventory Inventory { get; set; }
         public Class Class { get; }
 
-        // Some Stats increase(ex. lvlup, subclass selection) should be forever baked into character, 
-        // so when something happens in-game(inventory change, base stat modifiers etc) and Stats need recalculating,
-        // BaseStats will have these baked values saved and recalculation will happen on top of BaseStats
-        private Dictionary<string, double> BaseStats { get; }
         private Dictionary<string, double> BaseLvlUpStatsIncrease { get; } = CharConstants.BaseLvlUpStatsIncrease;
 
-        protected Character(string name, int level, Class _class, Inventory inventory, Dictionary<string, double> stats,
-            int gold = 0) : base(stats)
+        protected Character(string name, int level, Class _class, Inventory inventory, Dictionary<string, double> baseStats,
+            int gold = 0) : base(baseStats, level)
         {
             Gold = gold;
             Name = name;
             Class = _class;
             Level = level;
             Inventory = inventory;
-            BaseStats = new Dictionary<string, double>(Stats);
 
             Inventory.Items.CollectionChanged += (sender, args) =>
             {
@@ -46,7 +40,7 @@ namespace GameCoreLibrary.Classes
                     Inventory.ItemRestrictions = new Dictionary<ItemType, int>(ItemConstants.DefaultItemRestrictions);
                 }
 
-                this.ReCalculateStats(Inventory.Items);
+                ApplyLocalModifiers(Inventory.Items);
             };
         }
 
@@ -102,7 +96,7 @@ namespace GameCoreLibrary.Classes
         private void AddStatsFromAttributes(Dictionary<string, double> stats)
         {
             var filteredStats = stats.Where(x => CharConstants.AttrStatsIncrease.ContainsKey(x.Key))
-                                                        .ToDictionary(k => k.Key, v => v.Value));
+                                     .ToDictionary(k => k.Key, v => v.Value);
             foreach (var attributeStat in filteredStats)
             {
                 var attributeStatIncrease = CharConstants.AttrStatsIncrease[attributeStat.Key];
@@ -113,7 +107,7 @@ namespace GameCoreLibrary.Classes
             }
         }
 
-        public void ReCalculateStats(IEnumerable<Item> items)
+        public void ApplyLocalModifiers(IEnumerable<Item> items)
         {
             var currentHp = Stats[StatName.Hp];
             Stats = new Dictionary<string, double>(BaseStats)

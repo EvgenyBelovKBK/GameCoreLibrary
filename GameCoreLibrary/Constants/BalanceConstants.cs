@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GameCoreLibrary.Enums;
 
 namespace GameCoreLibrary.Constants
 {
@@ -33,6 +34,15 @@ namespace GameCoreLibrary.Constants
             { StatName.MagicResistance, 75 },
             { StatName.BlockChance, 90 },
             { StatName.LifestealPercent, 50 }
+        };
+
+        public static readonly Dictionary<Tier, Range> TierLevels = new()
+        {
+            { Tier.Tier1, new Range(0, 12)},
+            { Tier.Tier2, new Range(10, 24)},
+            { Tier.Tier3, new Range(24, 36)},
+            { Tier.Tier4, new Range(34, 50)},
+            { Tier.Tier5, new Range(48, 55)},
         };
 
         #endregion

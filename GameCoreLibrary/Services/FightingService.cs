@@ -14,22 +14,19 @@ namespace GameCoreLibrary.Services
             _randomGenerator = randomGenerator;
         }
 
-        private int CalculateFinalDamage(Character attacker, Character defender, out FightResult fightResult)
+        private int CalculateFinalDamage(Character attacker, Character defender)
         {
             var isCrit = _randomGenerator.IsRolled(attacker.Stats[StatName.CritChance]);
             var isEvade = _randomGenerator.IsRolled(defender.Stats[StatName.EvadeChance]);
             var isBlock = _randomGenerator.IsRolled(defender.Stats[StatName.BlockChance]);
             if (isEvade)
             {
-                fightResult = new FightResultBuilder().SetEvasion();
                 return 0;
             }
-            fightResult = new FightResultBuilder().SetDamage(isCrit);
             var damageAfterCritRoll = isCrit ? attacker.Stats[StatName.PhysDamage] * attacker.Stats[StatName.CritDamageMultiplier] :
                                                attacker.Stats[StatName.PhysDamage];
             if (isBlock)
             {
-                fightResult = new FightResultBuilder().SetBlock();
                 damageAfterCritRoll *= BalanceConstants.DamageAfterBlockMultiplier;
             }
 
@@ -45,20 +42,20 @@ namespace GameCoreLibrary.Services
             isEnemyDied = false;
             isPlayerDied = false;
 
-            var playerDamageToEnemy = CalculateFinalDamage(player, enemy, out var playerFightResult);
-            var enemyDamageToPlayer = CalculateFinalDamage(enemy, player, out var enemyFightResult);
+            var playerDamageToEnemy = CalculateFinalDamage(player, enemy);
+            var enemyDamageToPlayer = CalculateFinalDamage(enemy, player);
 
             //TODO
             if (true)
             {
-                PlayerAction(player, enemy, playerDamageToEnemy, playerFightResult);
+                PlayerAction(player, enemy, playerDamageToEnemy);
                 if (enemy.IsDead())
                 {
                     isEnemyDied = true;
                     return;
                 }
 
-                EnemyAction(enemy, player, enemyDamageToPlayer, enemyFightResult);
+                EnemyAction(enemy, player, enemyDamageToPlayer);
                 if (player.IsDead())
                 {
                     isPlayerDied = true;
@@ -67,13 +64,9 @@ namespace GameCoreLibrary.Services
         }
 
 
-        private void PlayerAction(Player player,Enemy enemy,int playerDamageToEnemy, FightResult playerFightResult)
+        private void PlayerAction(Player player,Enemy enemy,int playerDamageToEnemy)
         {
             enemy.Stats[StatName.Hp] -= playerDamageToEnemy;
-            if (playerFightResult.AttackOutcome == FightAction.CriticalStrike)
-            {
-                //TODO
-            }
             var isLifestealed =  player.ApplyLifesteal(playerDamageToEnemy);
             if (isLifestealed)
             {
@@ -82,18 +75,14 @@ namespace GameCoreLibrary.Services
 
         }
 
-        private void EnemyAction( Enemy enemy, Player player,int enemyDamageToPlayer,FightResult enemyFightResult)
+        private void EnemyAction( Enemy enemy, Player player,int enemyDamageToPlayer)
         {
             player.Stats[StatName.Hp] -= enemyDamageToPlayer;
-            if (enemyFightResult.AttackOutcome == FightAction.CriticalStrike)
-            {
-                //TODO
-            }
 
             enemy.ApplyLifesteal(enemyDamageToPlayer);
         }
 
-        //mult * (damage * damage) / armor + mult * damage
+        //mult * (damage^2) / armor + mult * damage
         private double CalulatePhysDamageAfterArmor(double damage, double armor)
         {
             return BalanceConstants.RawDamageToArmorMult * (damage * damage) / armor + (BalanceConstants.RawDamageToArmorMult * damage);

@@ -3,17 +3,15 @@
 namespace GameCoreLibrary.Classes
 {
     //TODO
-    public class Shop
+    public class Merchant
     {
-        public string Name { get; set; }
-        public List<Item> Stock { get; set; }
-        public Tier Tier { get; set; }
+        private List<Item> stock = new();
+        public int Level { get; set; }
 
-        public Shop(Tier tier, string name, List<Item> stock)
+        public Merchant(int level)
         {
-            Tier = tier;
-            Name = name;
-            Stock = stock;
+            Level = level;
+            GenerateStock();
         }
 
         public void BuyItem (Item item,Player player)
@@ -35,7 +33,7 @@ namespace GameCoreLibrary.Classes
 
             player.Gold -= item.Cost;
             player.Inventory.Items.Add(item);
-            Stock.Remove(item);
+            stock.Remove(item);
 
         }
         public void SellItem(Item item, Player player)
@@ -43,12 +41,18 @@ namespace GameCoreLibrary.Classes
             //TODO
             player.Gold += item.Cost;
             player.Inventory.Items.Remove(item);
-            Stock.Add(item);
+            stock.Add(item);
         }
 
-        private void ShowStock()
+        private List<Item> GetStock()
         {
            //TODO
+           return null;
+        }
+
+        private void GenerateStock()
+        {
+            stock = new List<Item>();
         }
     }
 }

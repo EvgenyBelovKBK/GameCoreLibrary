@@ -30,4 +30,18 @@ namespace GameCoreLibrary.Classes
         }
 
     }
+
+    public static class PlayerExtensions
+    {
+        //TODO
+        public static void Buy(this Player player, Merchant merchant, Item item)
+        {
+            merchant.BuyItem(item, player);
+        }
+
+        public static void Sell(this Player player, Merchant merchant, Item item)
+        {
+            merchant.SellItem(item, player);
+        }
+    }
 }
