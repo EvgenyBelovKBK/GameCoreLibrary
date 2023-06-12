@@ -1,6 +1,7 @@
 ﻿using GameCoreLibrary.Constants;
 using GameCoreLibrary.Enums;
 using System.Numerics;
+using System.Runtime.Intrinsics.Arm;
 
 namespace GameCoreLibrary.Classes
 {
@@ -40,7 +41,7 @@ namespace GameCoreLibrary.Classes
                     Inventory.ItemRestrictions = new Dictionary<ItemType, int>(ItemConstants.DefaultItemRestrictions);
                 }
 
-                ApplyLocalModifiers(Inventory.Items);
+                RecalculateStats(Inventory.Items);
             };
         }
 
@@ -92,22 +93,7 @@ namespace GameCoreLibrary.Classes
             }
         }
 
-        //Stats from attributes are NOT baked into character, they are always calculated
-        private void AddStatsFromAttributes(Dictionary<string, double> stats)
-        {
-            var filteredStats = stats.Where(x => CharConstants.AttrStatsIncrease.ContainsKey(x.Key))
-                                     .ToDictionary(k => k.Key, v => v.Value);
-            foreach (var attributeStat in filteredStats)
-            {
-                var attributeStatIncrease = CharConstants.AttrStatsIncrease[attributeStat.Key];
-                foreach (var statIncrease in attributeStatIncrease)
-                {
-                    Stats[statIncrease.Key] += statIncrease.Value * attributeStat.Value;
-                }
-            }
-        }
-
-        public void ApplyLocalModifiers(IEnumerable<Item> items)
+        public void RecalculateStats(IEnumerable<Item> items)
         {
             var currentHp = Stats[StatName.Hp];
             Stats = new Dictionary<string, double>(BaseStats)
@@ -122,8 +108,25 @@ namespace GameCoreLibrary.Classes
                 AddStats(item.Stats);
             }
 
+            ApplyModifiers();
+
             if (Stats[StatName.Hp] > Stats[StatName.TotalHp])
                 Stats[StatName.Hp] = Stats[StatName.TotalHp];
+        }
+
+        //Stats from attributes are NOT baked into character, they are always calculated
+        private void AddStatsFromAttributes(Dictionary<string, double> stats)
+        {
+            var filteredStats = stats.Where(x => CharConstants.AttrStatsIncrease.ContainsKey(x.Key))
+                                     .ToDictionary(k => k.Key, v => v.Value);
+            foreach (var attributeStat in filteredStats)
+            {
+                var attributeStatIncrease = CharConstants.AttrStatsIncrease[attributeStat.Key];
+                foreach (var statIncrease in attributeStatIncrease)
+                {
+                    Stats[statIncrease.Key] += statIncrease.Value * attributeStat.Value;
+                }
+            }
         }
     }
 }

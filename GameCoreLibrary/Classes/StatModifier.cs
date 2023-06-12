@@ -20,7 +20,7 @@ namespace GameCoreLibrary.Classes
             Stat = stat;
         }
 
-        public double ApplyLocal(double localValue)
+        public double GetModified(double localValue)
         {
             return localValue * Stat.Value;
         }

@@ -14,7 +14,6 @@ namespace GameCoreLibrary.Enums
 
     public enum StatModifierRange
     {
-        Local,
-        Global
+        Local
     }
 }
