@@ -16,14 +16,6 @@ namespace GameCoreLibrary.Classes
 
         public void BuyItem (Item item,Player player)
         {
-            var isAllowedToBuy = false;
-            isAllowedToBuy = player.Inventory.Items.Count(x => x.Type == item.Type) + 1 <= player.Inventory.ItemRestrictions[item.Type];
-
-            if (!isAllowedToBuy)
-            {
-                //TODO
-                throw new NotImplementedException();
-            }
 
             if (player.Gold < item.Cost)
             {
@@ -32,7 +24,6 @@ namespace GameCoreLibrary.Classes
             }
 
             player.Gold -= item.Cost;
-            player.Inventory.Items.Add(item);
             stock.Remove(item);
 
         }
@@ -40,7 +31,6 @@ namespace GameCoreLibrary.Classes
         {
             //TODO
             player.Gold += item.Cost;
-            player.Inventory.Items.Remove(item);
             stock.Add(item);
         }
 

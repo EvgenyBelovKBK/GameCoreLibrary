@@ -38,7 +38,7 @@ namespace GameCoreLibrary.Constants
 
         public static readonly Dictionary<Tier, Range> TierLevels = new()
         {
-            { Tier.Tier1, new Range(0, 12)},
+            { Tier.Tier1, new Range(0, 14)},
             { Tier.Tier2, new Range(10, 24)},
             { Tier.Tier3, new Range(24, 36)},
             { Tier.Tier4, new Range(34, 50)},

@@ -9,7 +9,7 @@ namespace GameCoreLibrary.Classes
     {
         public int Gold { get; set; }
         public string Name { get; set; }
-        public Inventory Inventory { get; set; }
+        private Inventory Inventory { get;}
         public Class Class { get; }
 
         private Dictionary<string, double> BaseLvlUpStatsIncrease { get; } = CharConstants.BaseLvlUpStatsIncrease;
@@ -22,29 +22,8 @@ namespace GameCoreLibrary.Classes
             Class = _class;
             Level = level;
             Inventory = inventory;
-
-            Inventory.Items.CollectionChanged += (sender, args) =>
-            {
-                if (Inventory.Items.Any(x => x.Type == ItemType.TwoHandedWeapon))
-                {
-                    Inventory.ItemRestrictions[ItemType.OneHandedWeapon] = 0;
-                    Inventory.ItemRestrictions[ItemType.TwoHandedWeapon] = 1;
-                }
-
-                else if (Inventory.Items.Any(x => x.Type == ItemType.OneHandedWeapon))
-                {
-                    Inventory.ItemRestrictions[ItemType.TwoHandedWeapon] = 0;
-                    Inventory.ItemRestrictions[ItemType.OneHandedWeapon] = 2;
-                }
-                else
-                {
-                    Inventory.ItemRestrictions = new Dictionary<ItemType, int>(ItemConstants.DefaultItemRestrictions);
-                }
-
-                RecalculateStats(Inventory.Items);
-            };
+            RecalculateStats();
         }
-
 
         protected void LvlUp(int lvlAmount = 1)
         {
@@ -93,7 +72,7 @@ namespace GameCoreLibrary.Classes
             }
         }
 
-        public void RecalculateStats(IEnumerable<Item> items)
+        public override void RecalculateStats()
         {
             var currentHp = Stats[StatName.Hp];
             Stats = new Dictionary<string, double>(BaseStats)
@@ -103,7 +82,7 @@ namespace GameCoreLibrary.Classes
 
             AddStatsFromAttributes(Stats);
 
-            foreach (var item in items)
+            foreach (var item in Inventory.Items)
             {
                 AddStats(item.Stats);
             }

@@ -9,12 +9,19 @@ namespace GameCoreLibrary.Classes
         public string Name {get; set; }
         public Tier Tier { get; set; }
         public ItemType Type { get; }
-        public Item(Dictionary<string, double> baseStats, int level, ItemType type, int cost, Tier rarity, string name) :base(baseStats, level)
+        public Dictionary<string, double> Requirments { get; }
+        public Item(Dictionary<string, double> baseStats, Dictionary<string, double> requirments, int level, ItemType type, int cost, Tier rarity, string name) :base(baseStats, level)
         {
             Type = type;
             Cost = cost;
             Tier = rarity;
             Name = name;
+            Requirments = requirments;
+        }
+
+        public override void RecalculateStats()
+        {
+            ApplyModifiers(true);
         }
     }
 }

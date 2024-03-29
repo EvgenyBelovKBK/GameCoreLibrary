@@ -15,8 +15,9 @@ namespace GameCoreLibrary.Classes
             Level = level;
             StatModifiers = statsModifiers ?? new();
             BaseStats = new Dictionary<string, double>(baseStats);
-            ApplyModifiers(true);
         }
+
+        public abstract void RecalculateStats();
 
         protected void ApplyModifiers(bool fromBase = false)
         {
